@@ -1,6 +1,10 @@
 const db = require("../models");
 const Colegio = db.colegio;
 const Op = db.Sequelize.Op;
+const Colegio_Curso_Paralelo = db.colegio_curso_paralelo;
+const Curso_Paralelo = db.curso_paralelo;
+const Curso = db.curso;
+const Paralelo = db.paralelo;
 
 
 //Create and Save a new administrador
@@ -145,6 +149,211 @@ exports.deleteAll = (req, res) =>{
             res.status(500).send({
                 message:
                     err.message || "Some error ocurred while removing all colegios."
+            });
+        });
+};
+
+exports.Cursos = (req, res) =>{
+    cursosParalelo = [];
+    cursos = [];
+    i=0;
+    j=0;
+    const id = req.params.colegio;
+    Colegio_Curso_Paralelo.findAll({
+        where: {CODIGO_COLEGIO:id}
+    })
+        .then(data =>{
+
+            longitud = data.length -1;
+            data.forEach(item =>{
+                Curso_Paralelo.findOne({
+                    where: {ID_CURSO_PARALELO:item.ID_CURSO_PARALELO}
+                })
+                    .then(dt =>{
+                        cursosParalelo.push(dt);
+                        if(i==longitud){
+
+                            long = cursosParalelo.length -1;
+                            cursosParalelo.forEach(item =>{
+                                Curso.findOne({
+                                    where: {CODIGO_CURSO:item.CODIGO_CURSO}
+                                })
+                                    .then(d =>{
+                                        cursos.push(d);
+                                        if(j==long){
+                                           res.send(cursos);
+                                        }
+                                        j++;
+                                    })
+                                    .catch(err =>{
+                                        return err;
+                                    });
+                            });
+
+                        }
+                        i++;
+                    })
+                    .catch(err =>{
+                        return err;
+                    });
+            });
+
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message:
+                    err.message || "Some error ocurred while retrieving Colegio_Curso_Paralelo."
+            });
+        });
+};
+
+
+exports.Paralelos = (req, res) =>{
+    cursosParalelo = [];
+    paralelos = [];
+    i=0;
+    j=0;
+    const id = req.params.colegio;
+    Colegio_Curso_Paralelo.findAll({
+        where: {CODIGO_COLEGIO:id}
+    })
+        .then(data =>{
+
+            longitud = data.length -1;
+            data.forEach(item =>{
+                Curso_Paralelo.findOne({
+                    where: {ID_CURSO_PARALELO:item.ID_CURSO_PARALELO}
+                })
+                    .then(dt =>{
+                        cursosParalelo.push(dt);
+                        if(i==longitud){
+
+                            long = cursosParalelo.length -1;
+                            cursosParalelo.forEach(item =>{
+                                Paralelo.findOne({
+                                    where: {CODIGO_PARALELO:item.CODIGO_PARALELO}
+                                })
+                                    .then(d =>{
+                                        paralelos.push(d);
+                                        if(j==long){
+                                           res.send(paralelos);
+                                        }
+                                        j++;
+                                    })
+                                    .catch(err =>{
+                                        return err;
+                                    });
+                            });
+
+                        }
+                        i++;
+                    })
+                    .catch(err =>{
+                        return err;
+                    });
+            });
+
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message:
+                    err.message || "Some error ocurred while retrieving Colegio_Curso_Paralelo."
+            });
+        });
+};
+
+exports.CursoParalelo = (req, res) =>{
+    cursosParalelo = [];
+    i=0;
+
+    const id = req.params.colegio;
+    Colegio_Curso_Paralelo.findAll({
+        where: {CODIGO_COLEGIO:id}
+    })
+        .then(data =>{
+
+            longitud = data.length -1;
+            data.forEach(item =>{
+                Curso_Paralelo.findOne({
+                    where: {ID_CURSO_PARALELO:item.ID_CURSO_PARALELO}
+                })
+                    .then(dt =>{
+                        cursosParalelo.push(dt);
+                        if(i==longitud){
+                            res.send(cursosParalelo);
+                        }
+                        i++;
+                    })
+                    .catch(err =>{
+                        return err;
+                    });
+            });
+
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message:
+                    err.message || "Some error ocurred while retrieving Colegio_Curso_Paralelo."
+            });
+        });
+};
+
+exports.ParalelosPorCurso = (req, res) =>{
+    cursosParalelo = [];
+    paralelos = [];
+    i=0;
+    j=0;
+    const colegio = req.query.colegio;
+    const curso = req.query.curso;
+    console.log('COLEGIO: '+colegio);
+    console.log('CURSO: '+curso);
+    Colegio_Curso_Paralelo.findAll({
+        where: {CODIGO_COLEGIO:colegio}
+    })
+        .then(data =>{
+
+            longitud = data.length -1;
+            data.forEach(item =>{
+                Curso_Paralelo.findOne({
+                    where: {ID_CURSO_PARALELO:item.ID_CURSO_PARALELO}
+                })
+                    .then(dt =>{
+                        cursosParalelo.push(dt);
+                        if(i==longitud){
+
+                            long = cursosParalelo.length -1;
+                            cursosParalelo.forEach(item =>{
+                                Paralelo.findOne({
+                                    where: {CODIGO_PARALELO:item.CODIGO_PARALELO }
+                                })
+                                    .then(d =>{
+                                        if(item.CODIGO_CURSO == curso){
+                                            paralelos.push(d);
+                                        }
+
+                                        if(j==long){
+                                           res.send(paralelos);
+                                        }
+                                        j++;
+                                    })
+                                    .catch(err =>{
+                                        return err;
+                                    });
+                            });
+
+                        }
+                        i++;
+                    })
+                    .catch(err =>{
+                        return err;
+                    });
+            });
+
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message:
+                    err.message || "Some error ocurred while retrieving Colegio_Curso_Paralelo."
             });
         });
 };

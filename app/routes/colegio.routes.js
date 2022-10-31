@@ -15,6 +15,18 @@ module.exports = app =>{
     //Retreive a single Estudiante with id
     router.get("/findOneNombre/:nombre", colegios.findOneNombre);
 
+    //Retreive a single Estudiante with id
+    router.get("/findCursos/:colegio", colegios.Cursos);
+
+    //Retreive a single Estudiante with id
+    router.get("/findParalelos/:colegio", colegios.Paralelos);
+
+    //Retreive a single Estudiante with id
+    router.get("/findCursoParalelo/:colegio", colegios.CursoParalelo);
+
+    //Retreive a single Estudiante with id
+    router.get("/xd/xd/findCursosParalelos", colegios.ParalelosPorCurso);
+
     //Update a Estudiante with id
     router.put("/:id", colegios.update);
 
