@@ -1,7 +1,7 @@
 const db = require("../models");
 const Curso_Paralelo = db.curso_paralelo;
 const Op = db.Sequelize.Op;
-
+const Colegio_Curso_Paralelo = db.colegio_curso_paralelo;
 
 //Create and Save a new administrador
 exports.create = (req, res) =>{
@@ -64,6 +64,41 @@ exports.findOne = (req, res) =>{
                 message: "Error retrieving curso_paralelo with id="+ id
             });
         });
+};
+
+//Find a single administrador with an correo
+exports.findByCursoParalelo = (req, res) =>{
+    const curso = req.query.curso;
+    const paralelo = req.query.paralelo;
+    const colegio = req.query.colegio;
+
+    Curso_Paralelo.findOne({ where: {
+        CODIGO_CURSO: curso,
+        CODIGO_PARALELO: paralelo
+       }
+   })
+    .then(data =>{
+        Colegio_Curso_Paralelo.findOne({ where: {
+            CODIGO_COLEGIO: colegio,
+            ID_CURSO_PARALELO: data.ID_CURSO_PARALELO
+           }
+       })
+        .then(data =>{
+            res.send(data);
+       })
+       .catch(err =>{
+           res.status(500).send({
+               message:
+                   err.message || "Some error ocurred while retrieving curso."
+           });
+       });
+   })
+   .catch(err =>{
+       res.status(500).send({
+           message:
+               err.message || "Some error ocurred while retrieving curso."
+       });
+   });
 };
 
 
