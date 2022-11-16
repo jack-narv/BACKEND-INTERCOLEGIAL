@@ -15,6 +15,8 @@ module.exports = app =>{
     //Retreive a single Estudiante with id
     router.get("/xd/findCursoParalelo", curso_paralelo.findByCursoParalelo);
 
+    router.get("/xd/findParaleloCurso", curso_paralelo.findCursoParalelo);
+
     //Update a Estudiante with id
     router.put("/:id", curso_paralelo.update);
 

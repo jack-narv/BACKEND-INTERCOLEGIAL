@@ -1,6 +1,7 @@
 const db = require("../models");
 const Admin = db.admin_colegio;
 const Op = db.Sequelize.Op;
+const jwt = require('jsonwebtoken');
 
 
 //Create and Save a new administrador
@@ -151,4 +152,58 @@ exports.deleteAll = (req, res) =>{
             });
         });
 };
+
+//Find a single administrador with an correo
+exports.findByUsuario = (req, res) =>{
+    const usuario = req.params.usuario;
+    Admin.findOne({ where: {
+        USUARIO_ADMIN: usuario
+       }
+   })
+    .then(data =>{
+        res.send(data);
+   })
+   .catch(err =>{
+       res.status(500).send({
+           message:
+               err.message || "Some error ocurred while retrieving admin."
+       });
+   });
+};
+
+exports.generateToken = (req, res) =>{
+    const {usuario, contrasena} = req.body;
+    var condition = usuario?{usuario:{[Op.like]:`%${usuario}%`}}:null;
+
+    Admin.findOne({ where: {
+             USUARIO_ADMIN: usuario,
+             CONTRASENA_ADMIN: contrasena
+            }
+        })
+         .then(data =>{
+             //console.log(data.dataValues);
+             const token = jwt.sign(data.dataValues, 'stil');
+             res.json({token});
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message:
+                    err.message || "Some error ocurred while retrieving administrador."
+            });
+        });
+}
+
+exports.verifyToken = (req, res) => {
+    if(!req.headers.authorization) return res.status(401).json('No autorizado');
+
+    const token = req.headers.authorization.substr(7);
+    if(token !== ''){
+        const content = jwt.verify(token, 'stil');
+        req.data = content;
+        res.json("Información secreta");
+    }else{
+        res.status(401).json('Token vacío');
+    }
+    
+}
 

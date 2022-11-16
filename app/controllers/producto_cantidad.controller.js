@@ -67,10 +67,12 @@ exports.findOne = (req, res) =>{
 };
 
 //Find a single administrador with an correo
-exports.findOneProducto = (req, res) =>{
-    const producto = req.params.producto;
+exports.findProductoCantidad = (req, res) =>{
+    const producto = req.query.producto;
+    const cantidad = req.query.cantidad;
     Producto_Cantidad.findOne({ where: {
-        CODIGO_PRODUCTO: producto
+        CODIGO_PRODUCTO: producto,
+        CANTIDAD_PRODUCTO: cantidad
        }
    })
     .then(data =>{

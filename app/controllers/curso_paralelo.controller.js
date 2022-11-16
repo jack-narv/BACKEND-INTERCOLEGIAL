@@ -102,6 +102,28 @@ exports.findByCursoParalelo = (req, res) =>{
 };
 
 
+//Find a single administrador with an correo
+exports.findCursoParalelo = (req, res) =>{
+    const curso = req.query.curso;
+    const paralelo = req.query.paralelo;
+
+    Curso_Paralelo.findOne({ where: {
+        CODIGO_CURSO: curso,
+        CODIGO_PARALELO: paralelo
+       }
+   })
+    .then(data =>{
+        res.send(data);
+   })
+   .catch(err =>{
+       res.status(500).send({
+           message:
+               err.message || "Some error ocurred while retrieving curso."
+       });
+   });
+};
+
+
 // Update a administrador by the id in the request
 exports.update = (req, res) =>{
     const id = req.params.id;
