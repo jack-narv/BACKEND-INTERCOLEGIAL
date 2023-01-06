@@ -13,7 +13,7 @@ module.exports = app =>{
     router.get("/:id", pedidos_productos.findOne);
 
     //Retreive a single Estudiante with id
-    router.get("/findOnePedido/:pedido", pedidos_productos.findOnePedido);
+    router.get("/findByPedido/:pedido", pedidos_productos.findByPedido);
 
     //Update a Estudiante with id
     router.put("/:id", pedidos_productos.update);

@@ -1,6 +1,14 @@
+const { producto } = require("../models");
 const db = require("../models");
 const Pedido = db.pedido;
 const Op = db.Sequelize.Op;
+const Emisor = db.emisor;
+const Curso_Paralelo = db.curso_paralelo;
+const Curso = db.curso;
+const Paralelo = db.paralelo;
+const Pedido_Producto = db.pedido_producto;
+const Producto_Cantidad = db.producto_cantidad;
+const Producto = db.producto;
 
 
 //Create and Save a new administrador
@@ -46,6 +54,170 @@ exports.findAll = (req,res) =>{
     Pedido.findAll({where: condition})
         .then(data =>{
             res.send(data);
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message:
+                    err.message || "Some error ocurred while retrieving pedidos."
+            });
+        });
+};
+
+exports.findByAdmin = (req,res) =>{
+    const admin = req.query.admin;
+
+    Pedido.findAll({where: {
+        ID_ADMIN: admin
+       }})
+        .then(data =>{
+            res.send(data);
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message:
+                    err.message || "Some error ocurred while retrieving pedidos."
+            });
+        });
+};
+
+exports.findPedidosCompletos = (req,res) =>{
+    
+    var i =0;
+    var j=0;
+    const todosPedidos = [];
+
+
+    const admin = req.query.admin;
+    
+    Pedido.findAll({where: {
+        ID_ADMIN: admin
+       }})
+        .then(pedidos =>{
+
+            long = pedidos.length-1;
+            pedidos.map(pedido =>{
+                var pedidoCompleto = {
+                    codigo_pedido: '',
+                    estado: null,
+                    fecha_pedido: '',
+                    mensaje_pedido: '',
+                    nombre_emisor: '',
+                    apellido_emisor: '',
+                    correo_emisor: '',
+                    curso: '',
+                    paralelo: '',
+                    productos: []
+                }    
+                Emisor.findByPk(pedido.CODIGO_EMISOR)
+                .then(emisor =>{
+
+                    pedidoCompleto.codigo_pedido = pedido.CODIGO_PEDIDO;
+                    pedidoCompleto.estado = pedido.ESTADO;
+                    pedidoCompleto.fecha_pedido = pedido.FECHA_PEDIDO;
+                    pedidoCompleto.mensaje_pedido = pedido.MENSAJE;
+                    pedidoCompleto.nombre_emisor = emisor.NOMBRE_EMISOR;
+                    pedidoCompleto.apellido_emisor = emisor.APELLIDO_EMISOR;
+                    pedidoCompleto.correo_emisor = emisor.CORREO_EMISOR;
+
+                        Curso_Paralelo.findByPk(emisor.ID_CURSO_PARALELO)
+                            .then(curso_paralelo =>{
+                                Curso.findByPk(curso_paralelo.CODIGO_CURSO)
+                                .then(curso =>{
+                                    pedidoCompleto.curso = curso.NOMBRE_CURSO;       
+                                    Paralelo.findByPk(curso_paralelo.CODIGO_PARALELO)
+                                    .then(paralelo =>{
+
+                                        pedidoCompleto.paralelo = paralelo.NOMBRE_PARALELO;
+
+                                        Pedido_Producto.findAll({where: {
+                                            CODIGO_PEDIDO: pedido.CODIGO_PEDIDO
+                                           }})
+                                            .then(pedidos_productos =>{
+                                                var j=0;
+                                                long2 = pedidos_productos.length-1;
+                                                pedidos_productos.map(pedido_producto=>{
+                                                    var productitos = {
+                                                        producto:'',
+                                                        cantidad: 0, 
+                                                        precio: 0,
+                                                        total: 0
+                                                    }
+                                                    Producto_Cantidad.findByPk(pedido_producto.ID_PRODUCTO_CANTIDAD)
+                                                        .then(producto_cantidad =>{
+                                                            productitos.cantidad = producto_cantidad.CANTIDAD_PRODUCTO;
+                                                            Producto.findByPk(producto_cantidad.CODIGO_PRODUCTO)
+                                                            .then(producto =>{
+                                                                productitos.producto = producto.NOMBRE_PRODUCTO;
+                                                                productitos.precio = producto.PRECIO_PRODUCTO;
+                                                                productitos.total = productitos.cantidad * productitos.precio;
+                                                                pedidoCompleto.productos.push(productitos);
+                                                                console.log('long2: '+long2);
+                                                                console.log('j: '+j);
+                                                                console.log('PRODUCTS: '+pedidoCompleto.productos);
+                                                                    if(j==long2){
+                                                                        todosPedidos.push(pedidoCompleto);
+                                                                        console.log(todosPedidos);
+                        
+                                                                        if(i==long){
+                                                                            res.send(todosPedidos);
+                                                                        }
+                                                                        i++;
+                                                                    }
+                                                                    j++;
+                                                                
+                                                            })
+                                                            .catch(err =>{
+                                                                res.status(500).send({
+                                                                    message: "Error retrieving producto with id="+ producto_cantidad.CODIGO_PRODUCTO
+                                                                });
+                                                            });
+                                                        })
+                                                        .catch(err =>{
+                                                            res.status(500).send({
+                                                                message:
+                                                                    err.message || "Error retrieving producto_cantidad with id="+ pedido_producto.ID_PRODUCTO_CANTIDAD
+                                                            });
+                                                        });
+                                                });
+                                                               
+                                            })
+                                            .catch(err =>{
+                                                res.status(500).send({
+                                                    message:
+                                                        err.message || "Some error ocurred while retrieving pedidos_productos."
+                                                });
+                                            });
+
+                                        
+                                    })
+                                    .catch(err =>{
+                                        res.status(500).send({
+                                            message: "Error retrieving paralelo with id="+ curso_paralelo.CODIGO_PARALELO
+                                        });
+                                    });
+                                })
+                                .catch(err =>{
+                                    res.status(500).send({
+                                        message: "Error retrieving curso with id="+ curso_paralelo.CODIGO_CURSO
+                                    });
+                                });
+                                
+                            })
+                            .catch(err =>{
+                                res.status(500).send({
+                                    message: "Error retrieving curso_paralelo with id="+ emisor.ID_CURSO_PARALELO
+                                });
+                            });
+                })
+                .catch(err =>{
+                    res.status(500).send({
+                        message: "Error retrieving emisor with id="+ id
+                    });
+                });
+              
+               
+            });
+            
         })
         .catch(err =>{
             res.status(500).send({

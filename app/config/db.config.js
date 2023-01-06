@@ -1,5 +1,6 @@
 module.exports = {
-    HOST: "156.67.73.120",
+    //156.67.73.120
+    HOST: "156.67.69.45",
     USER: "u466610561_pr",
     PASSWORD: "Ecuador1cipt",
     DB: "u466610561_prueba",

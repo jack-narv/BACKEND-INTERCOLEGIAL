@@ -67,9 +67,9 @@ exports.findOne = (req, res) =>{
 };
 
 //Find a single administrador with an correo
-exports.findOnePedido = (req, res) =>{
+exports.findByPedido = (req, res) =>{
     const pedido = req.params.pedido;
-    Pedido_Producto.findOne({ where: {
+    Pedido_Producto.findAll({ where: {
         CODIGO_PEDIDO: pedido
        }
    })
