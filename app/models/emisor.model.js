@@ -26,6 +26,9 @@ module.exports = (sequelize, Sequelize) =>{
         },
         TELEFONO_EMISOR: {
             type: Sequelize.STRING
+        },
+        TIPO_ENVIO: {
+            type: Sequelize.INTEGER
         }
     },{
         tableName: 'EMISOR',

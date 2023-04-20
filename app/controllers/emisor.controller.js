@@ -22,7 +22,8 @@ exports.create = (req, res) =>{
         APELLIDO_EMISOR: req.body.APELLIDO_EMISOR,
         CORREO_EMISOR: req.body.CORREO_EMISOR,
         APODO: req.body.APODO,
-        TELEFONO_EMISOR: req.body.TELEFONO_EMISOR
+        TELEFONO_EMISOR: req.body.TELEFONO_EMISOR,
+        TIPO_ENVIO: req.body.TIPO_ENVIO
     };
     
     //Save administrador in the database
