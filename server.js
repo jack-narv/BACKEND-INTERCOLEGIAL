@@ -44,6 +44,7 @@ require("./app/routes/producto_cantidad.routes")(app);
 require("./app/routes/pedido_producto.routes")(app);
 require("./app/routes/colegio_curso_paralelo.routes")(app);
 require("./app/routes/curso.routes")(app);
+require("./app/routes/correo.routes")(app);
 
 // set port, listen for request
 const PORT = process.env.PORT || 5000;
