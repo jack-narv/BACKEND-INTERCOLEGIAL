@@ -181,7 +181,7 @@ exports.generateToken = (req, res) =>{
             }
         })
          .then(data =>{
-             //console.log(data.dataValues);
+             
              const token = jwt.sign(data.dataValues, 'stil');
              res.json({token});
         })
