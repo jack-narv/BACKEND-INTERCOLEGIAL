@@ -154,13 +154,15 @@ exports.findPedidosCompletos = (req,res) =>{
                                                                 console.log('long2: '+long2);
                                                                 console.log('j: '+j);
                                                                 console.log('PRODUCTS: '+pedidoCompleto.productos);
-                                                                    if(j==long2){
+                                                                    if(j==1){
                                                                         todosPedidos.push(pedidoCompleto);
                                                                         console.log(todosPedidos);
                         
                                                                         if(i==long){
                                                                             res.send(todosPedidos);
                                                                         }
+                                                                        console.log('long: '+long);
+                                                                        console.log('i: '+i);
                                                                         i++;
                                                                     }
                                                                     j++;
